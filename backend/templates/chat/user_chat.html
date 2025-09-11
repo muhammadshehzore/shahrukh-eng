@@ -1,0 +1,57 @@
+<h2>Start Chat</h2>
+<form id="chat-start-form">
+  <input type="text" id="user_name" placeholder="Your Name" required />
+  <input type="email" id="email" placeholder="Your Email (optional)" />
+  <button type="submit">Start Chat</button>
+</form>
+
+<div id="chat-box" style="display:none;">
+  <h3>Chat</h3>
+  <div id="messages" style="height:300px; overflow-y:auto; border:1px solid #ccc; padding:10px;"></div>
+  <input id="message-input" placeholder="Type message..." />
+  <button id="send-btn">Send</button>
+</div>
+
+<script>
+let socket=null;
+let roomName=null;
+
+document.getElementById("chat-start-form").onsubmit = async (e)=>{
+  e.preventDefault();
+  const name=document.getElementById("user_name").value.trim();
+  const email=document.getElementById("email").value.trim();
+  if(!name) return;
+
+  // Generate unique room name
+  roomName = "guest_" + Date.now();
+
+  // Send to backend to create room
+  await fetch("/chat/start-room/", {
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-CSRFToken": "{{ csrf_token }}"},
+    body: JSON.stringify({room_name: roomName, user_name: name, email: email})
+  });
+
+  document.getElementById("chat-start-form").style.display="none";
+  document.getElementById("chat-box").style.display="block";
+
+  // Connect websocket
+  socket = new WebSocket("ws://"+window.location.host+"/ws/chat/"+roomName+"/");
+
+  socket.onmessage = (e)=>{
+    const data = JSON.parse(e.data);
+    const messagesDiv=document.getElementById("messages");
+    const style=data.sender==="admin"?"color:blue":"color:green";
+    messagesDiv.innerHTML += `<p style="${style}"><strong>${data.sender}:</strong> ${data.message}</p>`;
+    messagesDiv.scrollTop=messagesDiv.scrollHeight;
+  };
+};
+
+document.getElementById("send-btn").onclick = ()=>{
+  const input=document.getElementById("message-input");
+  const msg=input.value.trim();
+  if(!msg || !socket) return;
+  socket.send(JSON.stringify({message: msg, sender:"user"}));
+  input.value="";
+};
+</script>

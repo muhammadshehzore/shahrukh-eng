@@ -1,0 +1,8 @@
+<!-- templates/admin/base_site.html -->
+{% extends "admin/base_site.html" %}
+{% block sidebar %}
+    {{ block.super }}
+    <div style="margin-top: 20px;">
+        <a href="{% url 'admin:live-chat' %}" class="model-link">💬 Live Chat</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,126 @@
+/* ----------------------------
+   CKEditor 5 Dark Mode Styling
+   ---------------------------- */
+
+/* Editor content area */
+.ck.ck-editor__main .ck-content {
+    background-color: #1e293b !important;   /* Dark slate background */
+    color: #f0f5f9 !important;              /* Light text for readability */
+    min-height: 400px;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 16px;
+    line-height: 1.6;
+    font-family: "Inter", sans-serif;
+}
+
+/* Headings */
+.ck.ck-editor__main .ck-content h1 {
+    color: #facc15 !important; /* Gold heading */
+    font-size: 2.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.ck.ck-editor__main .ck-content h2 {
+    color: #facc15 !important;
+    font-size: 2rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.ck.ck-editor__main .ck-content h3 {
+    color: #facc15 !important;
+    font-size: 1.75rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Paragraphs */
+.ck.ck-editor__main .ck-content p {
+    color: #e2e8f0 !important;  /* Slightly darker for paragraphs */
+    margin-bottom: 1rem;
+}
+
+/* Links */
+.ck.ck-editor__main .ck-content a {
+    color: #60a5fa !important; /* Sky blue links */
+    text-decoration: underline;
+}
+
+/* Lists */
+.ck.ck-editor__main .ck-content ul,
+.ck.ck-editor__main .ck-content ol {
+    color: #e2e8f0 !important;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Blockquotes */
+.ck.ck-editor__main .ck-content blockquote {
+    border-left: 4px solid #facc15 !important;
+    padding-left: 1rem;
+    color: #f0f5f9 !important;
+    background-color: #273449 !important;
+    margin: 1rem 0;
+    border-radius: 0.25rem;
+}
+
+/* Tables */
+.ck.ck-editor__main .ck-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.ck.ck-editor__main .ck-content table th,
+.ck.ck-editor__main .ck-content table td {
+    border: 1px solid #475569 !important;
+    padding: 0.5rem;
+    color: #e2e8f0 !important;
+}
+
+/* Images inside content */
+.ck.ck-editor__main .ck-content img {
+    max-width: 100%;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Code blocks */
+.ck.ck-editor__main .ck-content pre {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+}
+
+
+/* -----------------------------
+   Force CKEditor dropdowns to be on top in Django admin
+   ----------------------------- */
+
+/* Admin container sometimes hides popups */
+body .admin-site,
+body .change-form {
+    overflow: visible !important;
+    z-index: auto !important;
+}
+
+/* CKEditor dropdowns and balloon panels */
+.ck.ck-dropdown,
+.ck.ck-balloon-panel,
+.ck.ck-toolbar {
+    z-index: 99999 !important;
+}
+
+/* Make sure the editable area doesn't clip */
+.ck.ck-editor__editable_inline {
+    overflow: visible !important;
+}
+
+/* Optional: ensure modal dialogs appear above everything */
+.ck.ck-dialog {
+    z-index: 99999 !important;
+}
