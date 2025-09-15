@@ -4,6 +4,8 @@
 "use client";
 import useWebSocket from "@/utils/useWebSocket";
 import { useState, useCallback, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
+
 
 export default function useAdminChat(token) {
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -130,7 +132,7 @@ export default function useAdminChat(token) {
         target: user,
         content,
         timestamp: new Date().toISOString(),
-        id: crypto.randomUUID(),
+        id: uuidv4(),
       };
       sendMessage(payload);
     },

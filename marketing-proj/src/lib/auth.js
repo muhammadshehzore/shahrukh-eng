@@ -128,3 +128,25 @@ export async function getValidAdminToken() {
     return null;
   }
 }
+
+
+// Check if admin is logged in
+export function isAdminAuthenticated() {
+  const access = getToken("access");
+  if (!access) return false;
+
+  try {
+    const { exp, is_admin } = JSON.parse(atob(access.split(".")[1]));
+
+    // Token expired?
+    if (exp * 1000 < Date.now()) {
+      return false;
+    }
+
+    // Must be admin
+    return is_admin === true;
+  } catch (err) {
+    console.error("❌ Invalid token in isAdminAuthenticated", err);
+    return false;
+  }
+}

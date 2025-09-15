@@ -3,7 +3,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAdminAuthenticated, logout } from "@/utils/auth";
+import { isAdminAuthenticated, logout } from "@/lib/auth";
 
 export default function AdminLayout({ children }) {
   const router = useRouter();

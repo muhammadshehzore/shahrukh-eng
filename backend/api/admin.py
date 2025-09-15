@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Service, Products, HeroSlide,Quote, ServiceGalleryImage
+from .models import Service, Products, HeroSlide,Quote, ServiceGalleryImage, ContactMessage
 from django.utils.html import format_html
 from . forms import ServiceAdminForm, ProductAdminForm
 from django.contrib.admin import AdminSite
@@ -125,3 +125,15 @@ class QuoteAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super().get_queryset(request).order_by("-created_at")
+    
+
+
+
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ("name", "email", "created_at")
+    search_fields = ("name", "email")
+
+

@@ -62,7 +62,9 @@ export default function AboutUs() {
           loop
           className="h-full relative z-20"
         >
-          {["/images/about1.jpg", "/images/about2.jpg", "/images/about3.jpg"].map((img, i) => (
+          {["https://as1.ftcdn.net/v2/jpg/01/78/20/98/1000_F_178209834_94E3ZHfsv6rJA8nG7cH4fhqnhPDD7NE7.jpg", 
+          "https://as2.ftcdn.net/v2/jpg/02/43/43/89/1000_F_243438995_YJ6yXbPzAbdjjaWt0N3eYXRFUfiAvZjJ.jpg", 
+          "https://as2.ftcdn.net/v2/jpg/01/75/88/17/1000_F_175881747_T8C2NNtULcj0NcGf2tWEzmvvcvX90VCK.jpg"].map((img, i) => (
             <SwiperSlide key={i}>
               <div
                 className="w-full h-full bg-cover bg-center relative"
@@ -100,7 +102,7 @@ export default function AboutUs() {
             Who We Are
           </motion.h2>
           <motion.p variants={fadeIn("left", 0.2)} className="text-lg text-gray-200 leading-relaxed">
-            FCG Engineering & Insulation is a premium provider of industrial insulation solutions,
+            M Shahrukh Engineering works is a premium provider of industrial insulation solutions,
             delivering services that elevate efficiency, safety, and sustainability.
           </motion.p>
           <motion.p variants={fadeIn("left", 0.4)} className="text-lg text-gray-200 leading-relaxed">
@@ -116,7 +118,7 @@ export default function AboutUs() {
           className="rounded-2xl overflow-hidden shadow-2xl relative group"
         >
           <img
-            src="/images/about-img1.jpg"
+            src="https://as1.ftcdn.net/v2/jpg/13/87/23/66/1000_F_1387236673_f1NT4h0xc6eJBmVb9UO71Be1WXlsN7yv.jpg"
             alt="About FCG"
             className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700"
           />
@@ -134,7 +136,7 @@ export default function AboutUs() {
             transition={{ duration: 1 }}
             className="rounded-2xl overflow-hidden shadow-2xl"
           >
-            <img src="/images/mission.jpg" alt="Our Mission" className="w-full h-auto object-cover" />
+            <img src="https://as1.ftcdn.net/v2/jpg/02/86/82/00/1000_F_286820076_yKVgSiHZx40FK7RnK36Zl87TIKHO7Liv.jpg" alt="Our Mission" className="w-full h-auto object-cover" />
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 60 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1 }}>

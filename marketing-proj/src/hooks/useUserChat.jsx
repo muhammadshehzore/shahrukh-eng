@@ -1,8 +1,8 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
 import useWebSocket from "@/utils/useWebSocket";
+import { v4 as uuidv4 } from "uuid"; // ← import uuid
 
 const SESSION_KEY = "chat_session";
 
@@ -34,7 +34,7 @@ export default function useUserChat(userName, userEmail) {
     if (stored.id && stored.start && now - stored.start < 24 * 60 * 60 * 1000) {
       setSessionId(stored.id);
     } else {
-      const newId = crypto.randomUUID();
+      const newId = uuidv4(); // ← use uuid here
       setSessionId(newId);
       localStorage.setItem(
         SESSION_KEY,
@@ -51,16 +51,13 @@ export default function useUserChat(userName, userEmail) {
     (data) => {
       if (!data) return;
 
-      // -----------------------------
-      // Content normalization
-      // -----------------------------
       const getContent = (msg) => msg.content || msg.message || msg.msg || msg.text || "";
 
       switch (data.type) {
         case "chat_message":
           setMessages((prev) => {
             const normalizedMsg = {
-              id: data.id || crypto.randomUUID(),
+              id: data.id || uuidv4(), // ← use uuid here
               sender: data.sender === userName ? "user" : "admin",
               content: getContent(data),
               timestamp: data.timestamp || new Date().toISOString(),
@@ -75,7 +72,7 @@ export default function useUserChat(userName, userEmail) {
         case "previous_messages":
           if (Array.isArray(data.messages)) {
             const history = data.messages.map((msg) => ({
-              id: msg.id || crypto.randomUUID(),
+              id: msg.id || uuidv4(), // ← use uuid here
               sender: msg.sender === userName ? "user" : "admin",
               content: getContent(msg),
               timestamp: msg.timestamp,
@@ -104,7 +101,7 @@ export default function useUserChat(userName, userEmail) {
         target: "admin",
         content,
         timestamp: new Date().toISOString(),
-        id: crypto.randomUUID(),
+        id: uuidv4(), // ← use uuid here
       };
 
       sendMessage(payload);
@@ -140,7 +137,7 @@ export default function useUserChat(userName, userEmail) {
       const data = await res.json();
       const getContent = (msg) => msg.content || msg.message || msg.msg || msg.text || "";
       const history = data.map((msg) => ({
-        id: msg.id || crypto.randomUUID(),
+        id: msg.id || uuidv4(), // ← use uuid here
         sender: msg.sender === userName ? "user" : "admin",
         content: getContent(msg),
         timestamp: msg.timestamp,

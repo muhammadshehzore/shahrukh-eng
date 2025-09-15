@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Service, HeroSlide, Products, Quote
+from .models import Service, HeroSlide, Products, Quote, ContactMessage
 
 class ServiceSerializer(serializers.ModelSerializer):
     hero_image = serializers.SerializerMethodField()
@@ -115,3 +115,15 @@ class QuoteSerializer(serializers.ModelSerializer):
             "product",  # ✅ added product
             "message"
         ]
+
+
+
+
+
+
+
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = ["id", "name", "email", "message", "created_at"]

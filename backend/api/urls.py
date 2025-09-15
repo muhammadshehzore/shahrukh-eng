@@ -13,4 +13,7 @@ urlpatterns = [
     path("hero-slides/", views.hero_slides, name="hero_slides"),
 
     path("quotes/", views.create_quote, name="create_quote"),
+
+    
+    path("contact/messages/", views.create_contact_message, name="create-contact-message"),
 ]

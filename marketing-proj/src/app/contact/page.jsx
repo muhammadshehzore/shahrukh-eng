@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin } from "lucide-react";
 import Particles from "react-tsparticles";
@@ -15,12 +16,46 @@ const fadeUp = {
 };
 
 export default function ContactUs() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [status, setStatus] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let res = await fetch("http://127.0.0.1:8000/api/contact/messages/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        setStatus("✅ Message sent successfully!");
+        setFormData({ name: "", email: "", message: "" }); // clear form
+      } else {
+        setStatus("❌ Failed to send message");
+      }
+    } catch (err) {
+      setStatus("⚠️ Error connecting to server");
+    }
+  };
+
   return (
     <div className="bg-gradient-to-br from-[#1A2A6C] via-[#344CB7] to-[#2E8BC0] text-white overflow-hidden">
       {/* Hero Section */}
       <section
-        className="relative h-[45vh] bg-fixed bg-center bg-cover"
-        style={{ backgroundImage: "url('/images/contact-hero.jpg')" }}
+        className="relative h-screen bg-fixed bg-center bg-cover"
+        style={{
+          backgroundImage:
+            "url('https://cdn.pixabay.com/photo/2019/05/10/12/36/contact-us-4193401_1280.jpg')",
+        }}
       >
         {/* Particles */}
         <Particles
@@ -34,7 +69,12 @@ export default function ContactUs() {
               shape: { type: "circle" },
               opacity: { value: 0.5 },
               size: { value: { min: 2, max: 6 } },
-              move: { enable: true, speed: 0.8, direction: "none", outModes: "bounce" },
+              move: {
+                enable: true,
+                speed: 0.8,
+                direction: "none",
+                outModes: "bounce",
+              },
             },
             interactivity: {
               events: {
@@ -88,8 +128,16 @@ export default function ContactUs() {
 
           {[
             { icon: Phone, title: "Phone", text: "+92 305 26463127" },
-            { icon: Mail, title: "Email", text: "info@mshahrukhengineeringworks.com" },
-            { icon: MapPin, title: "Address", text: "Plot # 55-C 15th Commercial St, D.H.A. Phase 2 Commercial Area Defence Housing Authority, Karachi, 77550" },
+            {
+              icon: Mail,
+              title: "Email",
+              text: "info@mshahrukhengineeringworks.com",
+            },
+            {
+              icon: MapPin,
+              title: "Address",
+              text: "Plot # 55-C 15th Commercial St, D.H.A. Phase 2 Commercial Area Defence Housing Authority, Karachi, 77550",
+            },
           ].map((item, i) => (
             <motion.div
               key={i}
@@ -114,29 +162,47 @@ export default function ContactUs() {
 
         {/* Contact Form */}
         <motion.form
+          onSubmit={handleSubmit}
           initial={{ opacity: 0, x: 60 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
           className="bg-white/10 backdrop-blur-xl p-8 rounded-2xl shadow-2xl space-y-5 border border-white/20"
         >
-          {["Your Name", "Your Email"].map((placeholder, i) => (
-            <motion.input
-              key={i}
-              type={placeholder.includes("Email") ? "email" : "text"}
-              placeholder={placeholder}
-              whileFocus={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-              className="w-full p-4 rounded-lg bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#FFD700] shadow-sm transition-all duration-300 hover:shadow-md"
-            />
-          ))}
+          <motion.input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Your Name"
+            whileFocus={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+            className="w-full p-4 rounded-lg bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#FFD700] shadow-sm transition-all duration-300 hover:shadow-md"
+            required
+          />
+
+          <motion.input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Your Email"
+            whileFocus={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+            className="w-full p-4 rounded-lg bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#FFD700] shadow-sm transition-all duration-300 hover:shadow-md"
+            required
+          />
 
           <motion.textarea
             rows="5"
+            name="message"
+            value={formData.message}
+            onChange={handleChange}
             placeholder="Your Message"
             whileFocus={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
             className="w-full p-4 rounded-lg bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#FFD700] shadow-sm transition-all duration-300 hover:shadow-md"
+            required
           ></motion.textarea>
 
           <motion.button
@@ -154,6 +220,8 @@ export default function ContactUs() {
               className="absolute inset-0 bg-white"
             />
           </motion.button>
+
+          {status && <p className="mt-3 text-sm">{status}</p>}
         </motion.form>
       </section>
 
@@ -167,8 +235,7 @@ export default function ContactUs() {
       >
         <iframe
           title="Google Map"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3621.89647!2d67.0680403!3d24.8329177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3eb33dfeb3844dff%3A0x3cc4b0344da0f597!2sM.Shahrukh%20Engineering%20Works!5e0!3m2!1sen!2s!4v1694190000000!5m2!1sen!2s
-"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3621.89647!2d67.0680403!3d24.8329177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3eb33dfeb3844dff%3A0x3cc4b0344da0f597!2sM.Shahrukh%20Engineering%20Works!5e0!3m2!1sen!2s!4v1694190000000!5m2!1sen!2s"
           className="w-full h-full border-0"
           allowFullScreen=""
           loading="lazy"
