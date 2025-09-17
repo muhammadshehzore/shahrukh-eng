@@ -100,6 +100,14 @@ export default function useWebSocket(username, onMessage) {
           adminConnected = true;
           adminReconnectAttempts = 0;
           if (adminReconnectRef) clearTimeout(adminReconnectRef);
+
+          // 🔹 Safe fetch_pending_messages
+          setTimeout(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: "fetch_pending_messages" }));
+              console.log("📤 Sent fetch_pending_messages safely");
+            }
+          }, 50);
         } else {
           userConnected = true;
           userReconnectAttempts = 0;
@@ -201,7 +209,7 @@ export default function useWebSocket(username, onMessage) {
     };
   }, [username]);
 
-  // --- Send Message ---
+  // --- Send Message (Safe) ---
   const sendMessage = useCallback((message, target = null) => {
     if (socketRef.current?.readyState !== WebSocket.OPEN) {
       console.warn("WS not open, message not sent:", message);
@@ -220,6 +228,7 @@ export default function useWebSocket(username, onMessage) {
     }
 
     socketRef.current.send(JSON.stringify(payload));
+    console.log("📤 Sent message:", payload);
   }, []);
 
   // --- End Chat (Admin side helper) ---
