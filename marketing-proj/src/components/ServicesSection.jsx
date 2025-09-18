@@ -1,3 +1,4 @@
+// src/components/ServicesSection.jsx
 "use client";
 
 import Link from "next/link";
@@ -11,10 +12,8 @@ gsap.registerPlugin(ScrollTrigger);
 export default function ServicesSection() {
   const [services, setServices] = useState([]);
   const [floatingStreaks, setFloatingStreaks] = useState([]);
-  const containerRef = useRef(null);
   const cardRefs = useRef([]);
 
-  // Fetch services
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/services/`, { cache: "no-store" })
       .then((res) => res.json())
@@ -22,7 +21,6 @@ export default function ServicesSection() {
       .catch(console.error);
   }, []);
 
-  // Generate random streaks
   useEffect(() => {
     const streaks = [...Array(10)].map(() => ({
       top: Math.random() * 100,
@@ -32,13 +30,11 @@ export default function ServicesSection() {
     setFloatingStreaks(streaks);
   }, []);
 
-  // GSAP animations
   useEffect(() => {
     if (!services.length) return;
 
     cardRefs.current.forEach((card) => {
       if (!card) return;
-
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: card,
@@ -58,7 +54,6 @@ export default function ServicesSection() {
 
   return (
     <section className="relative py-20 bg-gradient-to-b from-[#1a2c7c] via-[#243b9f] to-[#16205c] overflow-hidden">
-      {/* Floating streaks */}
       {floatingStreaks.map((s, i) => (
         <div
           key={i}
@@ -71,8 +66,7 @@ export default function ServicesSection() {
         />
       ))}
 
-      <div ref={containerRef} className="max-w-7xl mx-auto px-6 relative z-10">
-        {/* Section Title */}
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.h2
           className="text-5xl font-extrabold mb-14 text-center text-white tracking-tight"
           initial={{ opacity: 0, y: -20 }}
@@ -82,19 +76,17 @@ export default function ServicesSection() {
           Our <span className="text-[#FFD700] drop-shadow-lg">Premium Services</span>
         </motion.h2>
 
-        {/* Service Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+        <div className="flex overflow-x-auto space-x-6 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-10 pb-4 no-scrollbar-for-overflow">
           {services.map((service, idx) => (
             <motion.div
               key={service.slug}
               ref={(el) => (cardRefs.current[idx] = el)}
               whileHover={{ scale: 1.06 }}
-              className="relative bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl 
-                        rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl border border-white/20
-                        transition-all duration-500 group cursor-pointer"
+              className="min-w-[300px] md:min-w-0 relative bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl 
+                             rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl border border-white/20
+                             transition-all duration-500 group cursor-pointer"
             >
               <Link href={`/services/${service.slug}`} className="block">
-                {/* Image */}
                 <div className="h-52 w-full overflow-hidden relative">
                   <motion.img
                     src={service.image || "/placeholder-service.jpg"}
@@ -104,7 +96,6 @@ export default function ServicesSection() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                 </div>
 
-                {/* Content */}
                 <div className="p-6 text-center">
                   <h3 className="text-2xl font-bold text-white group-hover:text-[#FFD700] transition-colors duration-300">
                     {service.name}

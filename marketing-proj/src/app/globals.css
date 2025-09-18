@@ -40,3 +40,19 @@ body {
 .animate-slideDown {
   animation: slideDown 0.3s ease-out;
 }
+
+
+body, html {
+  overflow-x: hidden;
+}
+
+
+/* ✅ Force Swiper and its children to stay below Navbar */
+.swiper,
+.swiper-slide,
+.swiper-wrapper,
+.swiper-pagination,
+.swiper-button-next,
+.swiper-button-prev {
+  z-index: 0 !important;
+}

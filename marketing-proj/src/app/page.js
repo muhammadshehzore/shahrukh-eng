@@ -9,7 +9,7 @@ import Products from '@/components/Products';
 
 export default function Home() {
   return (
-    <>
+    <main className="overflow-x-hidden">
       {/* Hero Section */}
       <HeroSlider />
 
@@ -34,6 +34,6 @@ export default function Home() {
 
       {/* Call-to-Action */}
       <CallToActionSection />
-    </>
+    </main>
   );
 }

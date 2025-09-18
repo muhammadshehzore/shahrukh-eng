@@ -1,23 +1,20 @@
-// src/app/layout.js (server component, no "use client")
+// src/app/layout.js
 
 import './globals.css';
-import ClientLayoutWrapper from './ClientWrapper'; // we'll create this
+import ClientLayoutWrapper from './ClientWrapper';
 
 export const metadata = {
   title: 'My App',
   description: 'Next.js + Django Chat',
 };
 
-// src/app/layout.js
-
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      <body className="overflow-x-hidden">
         <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
+        <div id="mobile-menu-root"></div>
       </body>
     </html>
   );
 }
-1

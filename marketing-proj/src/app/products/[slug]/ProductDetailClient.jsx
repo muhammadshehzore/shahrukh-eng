@@ -11,6 +11,12 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
+// Utility to remove HTML tags from description
+const stripHtml = (html) => {
+  if (!html) return "";
+  return html.replace(/<[^>]+>/g, "");
+};
+
 export default function ProductDetailClient({ product, allProducts }) {
   const getImageUrl = (img) =>
     img ? (img.startsWith("http") ? img : `${process.env.NEXT_PUBLIC_API_URL}${img}`) : "/placeholder.png";
@@ -29,12 +35,14 @@ export default function ProductDetailClient({ product, allProducts }) {
       {/* Hero Image */}
       <div className="relative w-full h-[60vh] overflow-hidden rounded-b-[3rem] max-w-7xl mx-auto">
         <Image
-          src={getImageUrl(product.image)}
-          alt={product.title}
+          src={product.image}
           fill
+          alt={product.title || "Product Image"}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px"
+          className="object-cover"
           priority
-          className="object-cover scale-105"
         />
+
         <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
           <motion.h1
             className="text-5xl md:text-6xl font-extrabold text-[#FFD700] drop-shadow-[0_0_20px_rgba(255,215,0,0.6)]"
@@ -55,7 +63,7 @@ export default function ProductDetailClient({ product, allProducts }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6 }}
         >
-          {product.desc}
+          {stripHtml(product.desc)}
         </motion.p>
 
         <motion.div
@@ -112,12 +120,13 @@ export default function ProductDetailClient({ product, allProducts }) {
                         src={getImageUrl(p.image)}
                         alt={p.title}
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw"
                         className="object-cover hover:scale-105 transition-transform duration-500"
                       />
                     </div>
                     <div className="p-5 text-center">
                       <h3 className="text-xl font-semibold text-white mb-2">{p.title}</h3>
-                      <p className="text-gray-300 text-sm line-clamp-2">{p.desc}</p>
+                      <p className="text-gray-300 text-sm line-clamp-2">{stripHtml(p.desc)}</p>
                     </div>
                   </Link>
                 </motion.div>

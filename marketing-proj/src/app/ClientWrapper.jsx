@@ -1,3 +1,5 @@
+// src/app/ClientWrapper.js
+
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -25,7 +27,7 @@ export default function ClientLayoutWrapper({ children }) {
   return (
     <>
       {!hideLayout && <Navbar />}
-      <main className={`${!hideLayout ? "pt-16" : ""}`}> {/* 👈 compensate for fixed navbar */}
+      <main className={`${!hideLayout ? "pt-16" : ""}`}>
         {children}
       </main>
       {!hideLayout && <Footer />}
