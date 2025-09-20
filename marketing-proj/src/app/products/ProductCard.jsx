@@ -6,11 +6,7 @@ import { motion } from "framer-motion";
 
 export default function ProductCard({ product }) {
   const getImageUrl = (img) =>
-    img
-      ? img.startsWith("http")
-        ? img
-        : `${process.env.NEXT_PUBLIC_API_URL}${img}`
-      : "/placeholder.png";
+    img ? (img.startsWith("http") ? img : `${process.env.NEXT_PUBLIC_API_URL}${img}`) : "/placeholder.png";
 
   return (
     <motion.div
@@ -22,28 +18,24 @@ export default function ProductCard({ product }) {
                  hover:border-[#FFD700]/40 hover:shadow-[#FFD700]/30 cursor-pointer"
     >
       <Link href={`/products/${product.slug}`}>
-        {/* Product Image */}
         <div className="relative w-full h-64 overflow-hidden">
           <Image
-            src={getImageUrl(product.image)}
-            alt={product.title}
+            src={getImageUrl(product.hero_image)}
+            alt={product.name}
             fill
             className="object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
           />
-          {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition" />
         </div>
 
-        {/* Content */}
         <div className="p-6 relative z-10">
           <h3 className="text-2xl font-bold text-white group-hover:text-[#FFD700] transition">
-            {product.title}
+            {product.name}
           </h3>
           <p className="mt-2 text-gray-300 text-sm line-clamp-3">
-            {product.desc}
+            {product.meta_description || product.tagline || product.description_text}
           </p>
 
-          {/* CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -59,7 +51,6 @@ export default function ProductCard({ product }) {
           </motion.div>
         </div>
 
-        {/* Glow Effect */}
         <div className="absolute -inset-1 bg-gradient-to-r from-[#FFD700]/30 via-transparent to-[#00CFFF]/30 
                        rounded-3xl blur-2xl opacity-0 group-hover:opacity-70 transition duration-500" />
       </Link>

@@ -4,13 +4,13 @@ import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import Particles from "react-tsparticles";
+import Head from "next/head"; // <-- SEO head
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
 const fadeIn = (direction = "up", delay = 0) => {
-  let x = 0,
-    y = 0;
+  let x = 0, y = 0;
   if (direction === "left") x = 50;
   if (direction === "right") x = -50;
   if (direction === "up") y = 50;
@@ -18,18 +18,26 @@ const fadeIn = (direction = "up", delay = 0) => {
 
   return {
     hidden: { opacity: 0, x, y },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: { delay, duration: 0.9, ease: "easeOut" },
-    },
+    visible: { opacity: 1, x: 0, y: 0, transition: { delay, duration: 0.9, ease: "easeOut" } },
   };
 };
 
 export default function AboutUs() {
+  const pageTitle = "About Us - M. Shahrukh Engineering Works";
+  const pageDescription =
+    "Learn about M. Shahrukh Engineering Works, leading industrial insulation manufacturers. High-temperature jackets for energy saving and safety.";
+
   return (
     <div className="bg-gradient-to-b from-[#0D1B2A] via-[#12274D] to-[#101840] text-white overflow-hidden">
+
+      {/* SEO Meta */}
+      <Head>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+      </Head>
+
       {/* Hero Section */}
       <section className="relative w-full h-[60vh] md:h-[80vh]">
         <Particles
@@ -104,20 +112,13 @@ export default function AboutUs() {
             variants={fadeIn("left", 0.2)}
             className="text-lg text-gray-200 leading-relaxed"
           >
-            At{" "}
-            <span className="font-semibold text-[#FFD700]">
-              M. Shahrukh Engineering Works
-            </span>
-            , we manufacture high-temperature removable insulation jackets
-            (up to 1200°C) for industrial equipment, helping industries save
-            energy, reduce heat loss, and ensure worker safety.
+            At <span className="font-semibold text-[#FFD700]">M. Shahrukh Engineering Works</span>, we manufacture high-temperature removable insulation jackets (up to 1200°C) for industrial equipment, helping industries save energy, reduce heat loss, and ensure worker safety.
           </motion.p>
           <motion.p
             variants={fadeIn("left", 0.4)}
             className="text-lg text-gray-200 leading-relaxed"
           >
-            Our team partners with clients worldwide, ensuring excellence and
-            innovation in every project.
+            Our team partners with clients worldwide, ensuring excellence and innovation in every project.
           </motion.p>
         </motion.div>
 
@@ -158,13 +159,9 @@ export default function AboutUs() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
           >
-            <h2 className="text-5xl font-bold mb-6 text-[#FFD700]">
-              Our Mission
-            </h2>
+            <h2 className="text-5xl font-bold mb-6 text-[#FFD700]">Our Mission</h2>
             <p className="leading-relaxed text-lg text-gray-200">
-              To deliver innovative, durable, and cost-effective insulation
-              solutions that improve energy efficiency and reduce operating
-              costs for industries in Pakistan and worldwide.
+              To deliver innovative, durable, and cost-effective insulation solutions that improve energy efficiency and reduce operating costs for industries in Pakistan and worldwide.
             </p>
           </motion.div>
         </div>
@@ -190,12 +187,7 @@ export default function AboutUs() {
             <li>Custom high-temperature equipment</li>
           </ul>
           <p>
-            Jackets are made with{" "}
-            <span className="text-[#FFD700] font-semibold">
-              heat-resistant fabrics (up to 1200°C)
-            </span>
-            , designed for easy installation, long-term use, and maximum
-            safety.
+            Jackets are made with <span className="text-[#FFD700] font-semibold">heat-resistant fabrics (up to 1200°C)</span>, designed for easy installation, long-term use, and maximum safety.
           </p>
         </div>
       </section>
@@ -234,7 +226,7 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Timeline Section */}
+      {/* Timeline */}
       <section className="max-w-6xl mx-auto py-24 px-6">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}

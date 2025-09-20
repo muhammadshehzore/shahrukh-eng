@@ -1,140 +1,198 @@
 "use client";
 
-import ProductQuote from "@/components/ProductQuote";
-import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { motion, useScroll, useTransform } from "framer-motion";
+import Link from "next/link";
+import ProductQuote from "../../../components/ProductQuote";
+import Script from "next/script";
 
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-
-// Utility to remove HTML tags from description
-const stripHtml = (html) => {
-  if (!html) return "";
-  return html.replace(/<[^>]+>/g, "");
+const getImageUrl = (path) => {
+  if (!path) return "/placeholder.png";
+  const cleanPath = path.replace(/^\/api/, "");
+  return path.startsWith("http")
+    ? path
+    : `${process.env.NEXT_PUBLIC_API_URL}${cleanPath}`;
 };
 
-export default function ProductDetailClient({ product, allProducts }) {
-  const getImageUrl = (img) =>
-    img ? (img.startsWith("http") ? img : `${process.env.NEXT_PUBLIC_API_URL}${img}`) : "/placeholder.png";
+// Sparkle overlay component
+function Sparkle() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{
+        opacity: [0, 0.6, 0],
+        scale: [0.8, 1.2, 0.8],
+        x: Math.random() * 200 - 100,
+        y: Math.random() * 200 - 100,
+      }}
+      transition={{
+        duration: 2 + Math.random() * 2,
+        repeat: Infinity,
+        repeatType: "loop",
+        ease: "easeInOut",
+        delay: Math.random() * 2,
+      }}
+      className="absolute w-2 h-2 bg-white rounded-full filter blur-sm"
+    />
+  );
+}
 
-  // Filter products (remove current one)
-  const moreProducts = allProducts.filter((p) => p.slug !== product.slug);
+export default function ProductDetailClient({ product, moreProducts }) {
+  const productImage = getImageUrl(product.hero_image);
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], [0, 80]);
+
+  // JSON-LD structured data
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: product.name,
+    image: [productImage],
+    description: product.meta_description || product.tagline || product.description || "",
+    sku: product.slug,
+    brand: {
+      "@type": "Organization",
+      name: "M. Shahrukh Engineering Works",
+    },
+  };
 
   return (
-    <section className="relative bg-gradient-to-b from-[#0f1a4d] via-[#1a2c7c] to-[#0b0f2e] text-white overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute inset-0">
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-blue-700/30 rounded-full blur-[180px] animate-pulse" />
-        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-yellow-500/20 rounded-full blur-[180px] animate-pulse" />
-      </div>
+    <div className="bg-gradient-to-b from-blue-950 via-blue-900 to-black text-white">
+      <Script id="product-jsonld" type="application/ld+json">
+        {JSON.stringify(jsonLd)}
+      </Script>
 
-      {/* Hero Image */}
-      <div className="relative w-full h-[60vh] overflow-hidden rounded-b-[3rem] max-w-7xl mx-auto">
-        <Image
-          src={product.image}
-          fill
-          alt={product.title || "Product Image"}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px"
-          className="object-cover"
-          priority
-        />
-
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-          <motion.h1
-            className="text-5xl md:text-6xl font-extrabold text-[#FFD700] drop-shadow-[0_0_20px_rgba(255,215,0,0.6)]"
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
-          >
-            {product.title}
-          </motion.h1>
-        </div>
-      </div>
-
-      {/* Description + Quote Form */}
-      <div className="relative max-w-5xl mx-auto px-6 mt-16 text-center">
-        <motion.p
-          className="text-lg md:text-xl text-gray-200 leading-relaxed"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6 }}
-        >
-          {stripHtml(product.desc)}
-        </motion.p>
-
-        <motion.div
-          className="mt-12"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1 }}
-        >
-          <ProductQuote productTitle={product.title} />
+      {/* HERO SECTION */}
+      <section className="relative h-[70vh] md:h-[85vh] overflow-hidden">
+        <motion.div style={{ y }} className="absolute inset-0">
+          <Image
+            src={productImage}
+            alt={product.name}
+            fill
+            priority
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 via-blue-950/20 to-black/10" />
+          {[...Array(10)].map((_, i) => (
+            <Sparkle key={i} />
+          ))}
         </motion.div>
-      </div>
 
-      {/* More Products Slider */}
-      {moreProducts.length > 0 && (
-        <div className="relative max-w-7xl mx-auto px-6 mt-20 pb-20">
-          <motion.h2
-            className="text-3xl md:text-4xl font-bold text-center text-[#FFD700] mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+          <motion.h1
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-200 bg-clip-text text-transparent drop-shadow-lg"
           >
-            More Products
+            {product.name}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 1 }}
+            className="mt-6 text-lg md:text-xl text-blue-200 max-w-2xl"
+          >
+            {product.tagline || "Premium engineering excellence, built for performance."}
+          </motion.p>
+        </div>
+      </section>
+
+      {/* DESCRIPTION */}
+      <section className="container mx-auto px-6 py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="bg-gradient-to-r from-blue-800/30 to-blue-900/30 p-10 rounded-2xl shadow-2xl backdrop-blur-sm"
+        >
+          {product?.description ? (
+            <div
+              dangerouslySetInnerHTML={{ __html: product.description }}
+              className="text-lg md:text-xl text-gray-200 leading-relaxed text-center"
+            />
+          ) : (
+            <p className="text-center text-gray-400">No description available.</p>
+          )}
+        </motion.div>
+      </section>
+
+      {/* QUOTE FORM */}
+      <section className="container mx-auto px-6 py-20">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950 rounded-2xl p-10 shadow-xl border border-blue-700/30"
+        >
+          {[...Array(5)].map((_, i) => (
+            <Sparkle key={i} />
+          ))}
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-cyan-300 mb-8">
+            Get a Custom Quote
+          </h2>
+
+          {/* Pass product name and optionally service to ProductQuote */}
+          <ProductQuote productTitle={product.name} serviceName={null} />
+        </motion.div>
+      </section>
+
+      {/* MORE PRODUCTS */}
+      {moreProducts.length > 0 && (
+        <section className="container mx-auto px-6 py-24">
+          <motion.h2
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent mb-12"
+          >
+            Explore More Premium Products
           </motion.h2>
 
-          <Swiper
-            modules={[Autoplay, Pagination, Navigation]}
-            spaceBetween={30}
-            slidesPerView={Math.min(3, moreProducts.length)}
-            loop={moreProducts.length > 3}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
-            pagination={{ clickable: true }}
-            navigation
-            breakpoints={{
-              640: { slidesPerView: Math.min(1, moreProducts.length) },
-              768: { slidesPerView: Math.min(2, moreProducts.length) },
-              1024: { slidesPerView: Math.min(3, moreProducts.length) },
-            }}
-          >
-            {moreProducts.map((p, idx) => (
-              <SwiperSlide key={p.slug || idx}>
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+            {moreProducts.map((p, index) => {
+              const moreImg = getImageUrl(p.hero_image);
+              return (
                 <motion.div
-                  initial={{ opacity: 0, y: 40 }}
+                  key={p.slug}
+                  initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: idx * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-gradient-to-b from-[#1a2c7c] to-[#0f1a4d] rounded-2xl overflow-hidden shadow-lg border border-white/10 hover:border-[#FFD700]/50 transition"
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-blue-950 to-blue-900 shadow-xl group hover:shadow-cyan-400/20 hover:scale-[1.02] transition-transform"
                 >
-                  <Link href={`/products/${p.slug}`}>
-                    <div className="relative w-full h-56">
-                      <Image
-                        src={getImageUrl(p.image)}
-                        alt={p.title}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw"
-                        className="object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                    <div className="p-5 text-center">
-                      <h3 className="text-xl font-semibold text-white mb-2">{p.title}</h3>
-                      <p className="text-gray-300 text-sm line-clamp-2">{stripHtml(p.desc)}</p>
-                    </div>
-                  </Link>
+                  <div className="relative h-60">
+                    <Image
+                      src={moreImg}
+                      alt={p.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-blue-950/10 to-transparent opacity-70 group-hover:opacity-100 transition" />
+                  <div className="relative p-6">
+                    <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-cyan-300 transition">
+                      {p.name}
+                    </h3>
+                    <p className="text-gray-300 text-sm line-clamp-2 mb-4">
+                      {p.meta_description || p.tagline || "High quality engineering solution"}
+                    </p>
+                    <Link
+                      href={`/products/${p.slug}`}
+                      className="inline-block font-semibold text-cyan-300 hover:text-blue-400 transition"
+                    >
+                      View Details →
+                    </Link>
+                  </div>
                 </motion.div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+              );
+            })}
+          </div>
+        </section>
       )}
-    </section>
+    </div>
   );
 }

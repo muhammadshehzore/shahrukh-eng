@@ -1,131 +1,125 @@
-// src/components/ProductQuote.jsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 
-export default function ProductQuote({ productTitle }) {
+export default function ProductQuote({ productTitle, serviceName }) {
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
     message: "",
-    product: productTitle || "",
+    product: productTitle || null,
+    service: serviceName || null,
   });
-
   const [status, setStatus] = useState(null);
-
-  // Update product field if prop changes dynamically
-  useEffect(() => {
-    setForm((prev) => ({ ...prev, product: productTitle || "" }));
-  }, [productTitle]);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("loading");
+    setErrors({});
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/quotes/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          message: form.message,
-          product: form.product,  // ✅ Send product
-          service: "",           // ✅ Keep service blank
-        }),
+        body: JSON.stringify(form),
       });
 
-      if (!res.ok) throw new Error("Failed to submit");
+      const data = await res.json();
+      console.log("Quote API response:", data);
 
-      setForm({
-        name: "",
-        email: "",
-        phone: "",
-        message: "",
-        product: productTitle || "",
-      });
-      setStatus("success");
+      if (res.ok && data.success) {
+        setStatus("success");
+        setForm({
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+          product: productTitle || null,
+          service: serviceName || null,
+        });
+      } else {
+        setStatus("error");
+        setErrors(data.errors || { general: ["Something went wrong"] });
+      }
     } catch (err) {
-      console.error(err);
       setStatus("error");
+      setErrors({ general: ["Network error, try again"] });
     }
   };
 
   return (
     <motion.div
-      className="max-w-xl mx-auto bg-gradient-to-r from-[#1a2c7c] to-[#0f1a4d] p-8 rounded-3xl shadow-2xl relative overflow-hidden"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className="bg-gray-900 rounded-2xl shadow-xl p-8 md:p-10"
     >
-      <h3 className="text-2xl md:text-3xl font-bold text-white mb-6 text-center">
-        Request a Quote
-      </h3>
+      <h3 className="text-2xl font-bold text-[#FFD700] mb-6">Request a Quote</h3>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <input
           type="text"
           name="name"
-          placeholder="Full Name"
+          placeholder="Your Name"
           value={form.name}
           onChange={handleChange}
           required
-          className="w-full p-3 rounded-xl border border-white/30 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:border-[#FFD700] transition"
+          className="w-full rounded-lg px-4 py-3 bg-black/50 border border-gray-700 text-white placeholder-gray-400 focus:border-[#FFD700] focus:ring focus:ring-[#FFD700]/30 outline-none transition"
         />
         <input
           type="email"
           name="email"
-          placeholder="Email Address"
+          placeholder="Your Email"
           value={form.email}
           onChange={handleChange}
           required
-          className="w-full p-3 rounded-xl border border-white/30 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:border-[#FFD700] transition"
+          className="w-full rounded-lg px-4 py-3 bg-black/50 border border-gray-700 text-white placeholder-gray-400 focus:border-[#FFD700] focus:ring focus:ring-[#FFD700]/30 outline-none transition"
         />
         <input
-          type="tel"
+          type="text"
           name="phone"
-          placeholder="Contact Number"
+          placeholder="Your Phone Number"
           value={form.phone}
           onChange={handleChange}
-          required
-          className="w-full p-3 rounded-xl border border-white/30 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:border-[#FFD700] transition"
+          className="w-full rounded-lg px-4 py-3 bg-black/50 border border-gray-700 text-white placeholder-gray-400 focus:border-[#FFD700] focus:ring focus:ring-[#FFD700]/30 outline-none transition"
         />
         <textarea
           name="message"
+          rows="4"
           placeholder="Your Message"
           value={form.message}
           onChange={handleChange}
-          rows={4}
-          className="w-full p-3 rounded-xl border border-white/30 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:border-[#FFD700] transition"
+          className="w-full rounded-lg px-4 py-3 bg-black/50 border border-gray-700 text-white placeholder-gray-400 focus:border-[#FFD700] focus:ring focus:ring-[#FFD700]/30 outline-none transition"
         />
 
         <button
           type="submit"
           disabled={status === "loading"}
-          className="w-full py-3 bg-gradient-to-r from-[#FFD700]/80 to-[#FFD700] hover:from-[#FFD700] hover:to-[#FFC700] text-black font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all"
+          className="w-full bg-[#FFD700] text-black font-semibold py-3 rounded-lg hover:bg-yellow-400 transition disabled:opacity-50"
         >
-          {status === "loading" ? "Submitting..." : "Submit Quote"}
+          {status === "loading" ? "Sending..." : "Send Request"}
         </button>
-
-        {status === "success" && (
-          <p className="text-green-400 text-center mt-2">Quote submitted successfully!</p>
-        )}
-        {status === "error" && (
-          <p className="text-red-400 text-center mt-2">Something went wrong. Try again.</p>
-        )}
       </form>
 
-      {/* Animated Glow */}
-      <div className="absolute -top-32 -left-32 w-64 h-64 rounded-full bg-yellow-400/30 blur-[100px] animate-pulse" />
-      <div className="absolute -bottom-32 -right-32 w-64 h-64 rounded-full bg-blue-500/30 blur-[100px] animate-pulse" />
+      {status === "success" && (
+        <p className="text-green-400 mt-4">✅ Request sent successfully!</p>
+      )}
+      {status === "error" &&
+        Object.keys(errors).map((key) => (
+          <p key={key} className="text-red-400 mt-2">
+            ❌ {Array.isArray(errors[key])
+              ? errors[key].join(", ")
+              : errors[key]}
+          </p>
+        ))}
     </motion.div>
   );
 }

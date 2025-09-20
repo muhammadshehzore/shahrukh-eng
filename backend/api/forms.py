@@ -1,7 +1,7 @@
 # admin.py (or forms.py if you prefer)
 from django import forms
 from django_ckeditor_5.widgets import CKEditor5Widget
-from .models import Service, Products
+from .models import Service, Product
 
 class ProductAdminForm(forms.ModelForm):
     desc = forms.CharField(
@@ -16,7 +16,7 @@ class ProductAdminForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Products
+        model = Product
         fields = "__all__"
 
 

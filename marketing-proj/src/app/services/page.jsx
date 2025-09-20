@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 
+// ...existing imports
 export default function ServicesPage() {
   const [services, setServices] = useState([]);
   const [filteredServices, setFilteredServices] = useState([]);
@@ -52,10 +53,18 @@ export default function ServicesPage() {
         >
           Our Services
         </motion.h1>
-        <p className="text-center text-gray-300 max-w-2xl mx-auto mb-10">
-          Explore our premium insulation and engineering solutions.  
-          Select a service to learn more.
-        </p>
+
+        {/* Company Description */}
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-center text-gray-300 max-w-3xl mx-auto mb-10"
+        >
+          At M. Shahrukh Engineering Works, we design and manufacture high-temperature removable insulation jackets, covers, pads, and blankets for all types of industrial equipment. Our insulation solutions are reusable, fireproof, and custom-made to reduce heat loss, save energy, and ensure workplace safety.
+          <br /><br />
+          From generators and turbines to boilers, pipelines, pumps, valves, and plastic processing machines, our products are trusted in power plants, refineries, chemical factories, textile units, and manufacturing industries across Pakistan and abroad.
+        </motion.p>
 
         {/* Search */}
         <div className="flex items-center bg-white/10 rounded-lg px-4 py-3 max-w-lg mx-auto mb-10">

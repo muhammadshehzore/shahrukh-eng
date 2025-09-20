@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Service, Products, HeroSlide,Quote, ServiceGalleryImage, ContactMessage
+from .models import Service, Product, ProductGalleryImage, HeroSlide,Quote, ServiceGalleryImage, ContactMessage
 from django.utils.html import format_html
 from . forms import ServiceAdminForm, ProductAdminForm
 from django.contrib.admin import AdminSite
@@ -30,6 +30,8 @@ class ServiceGalleryInline(admin.TabularInline):
             )
         return "-"
     image_preview.short_description = "Preview"
+
+
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
@@ -84,23 +86,23 @@ class ServiceAdmin(admin.ModelAdmin):
 
 
 
-@admin.register(Products)
+class ProductGalleryImageInline(admin.TabularInline):
+    model = ProductGalleryImage
+    extra = 1
+
+
+@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("title", "short_desc", "image_preview")
-    search_fields = ("title", "desc")
-    list_filter = ("title",)
-    readonly_fields = ("image_preview",)
+    list_display = ("name", "slug", "price", "in_stock", "show_in_nav", "created_at")
+    list_filter = ("in_stock", "show_in_nav", "show_in_footer")
+    search_fields = ("name", "tagline", "meta_description")
+    prepopulated_fields = {"slug": ("name",)}
+    inlines = [ProductGalleryImageInline]
 
-    def short_desc(self, obj):
-        return obj.desc[:50] + "..." if len(obj.desc) > 50 else obj.desc
 
-    def image_preview(self, obj):
-        if obj.image:
-            return f'<img src="{obj.image.url}" style="width:100px; height:auto; border-radius:8px;" />'
-        return "No image"
-    image_preview.allow_tags = True
-    image_preview.short_description = "Image Preview"
-
+@admin.register(ProductGalleryImage)
+class ProductGalleryImageAdmin(admin.ModelAdmin):
+    list_display = ("product", "caption", "image")
  
 
 @admin.register(HeroSlide)
@@ -126,8 +128,6 @@ class QuoteAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).order_by("-created_at")
     
-
-
 
 
 

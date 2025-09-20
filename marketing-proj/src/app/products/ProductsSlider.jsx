@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -10,40 +7,21 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-export default function ProductsSlider() {
-  const [products, setProducts] = useState([]);
-  const [mounted, setMounted] = useState(false);
+const getImageUrl = (path) => {
+  if (!path) return "/placeholder.png";
+  return path.startsWith("http")
+    ? path
+    : `${process.env.NEXT_PUBLIC_API_URL}${path}`;
+};
 
-  useEffect(() => {
-    setMounted(true);
-
-    const fetchProducts = async () => {
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-        const res = await fetch(`${baseUrl}/products/`, { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to fetch products");
-        const data = await res.json();
-        setProducts(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setProducts([]);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  if (!mounted || !products || products.length === 0) return null;
-
-  const getImageUrl = (path) => {
-    if (!path) return "/placeholder.png";
-    return path.startsWith("http")
-      ? path
-      : `${process.env.NEXT_PUBLIC_API_URL}${path}`;
-  };
+export default function ProductsSlider({ products = [] }) {
+  if (!products.length) return null;
 
   return (
-    <section className="relative py-20 bg-gradient-to-br from-[#1a2c7c] via-[#243b9f] to-[#16205c] overflow-hidden">
+    <section
+      className="relative py-20 bg-gradient-to-br from-[#1a2c7c] via-[#243b9f] to-[#16205c] overflow-hidden"
+      aria-label="Our Products"
+    >
       <motion.h2
         className="text-5xl font-extrabold text-center mb-12 text-white tracking-tight"
         initial={{ opacity: 0, y: -20 }}
@@ -65,7 +43,7 @@ export default function ProductsSlider() {
               1280: { slidesPerView: 4, spaceBetween: 32 },
             }}
             autoplay={{ delay: 4000, disableOnInteraction: false }}
-            loop
+            loop={products.length > 1}
             pagination={{ clickable: true }}
             navigation
             className="py-6"
@@ -81,12 +59,14 @@ export default function ProductsSlider() {
                   >
                     <div className="relative w-full h-72">
                       <Image
-                        src={getImageUrl(product.image)}
+                        src={getImageUrl(product.hero_image)}
                         alt={product.name || "Product Image"}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                         className="object-cover transform group-hover:scale-110 transition-transform duration-700"
-                        onError={(e) => (e.currentTarget.src = "/placeholder.png")}
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.png";
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
                     </div>
@@ -97,7 +77,9 @@ export default function ProductsSlider() {
                       </h3>
                       <p
                         className="mt-2 text-gray-300 text-sm line-clamp-2"
-                        dangerouslySetInnerHTML={{ __html: product.desc }}
+                        dangerouslySetInnerHTML={{
+                          __html: product.tagline || product.meta_description || "",
+                        }}
                       />
                     </div>
                   </motion.div>
